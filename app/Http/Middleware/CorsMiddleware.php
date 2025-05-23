@@ -18,6 +18,7 @@ class CorsMiddleware
     $allowedOrigins = [
         'http://localhost:3000',
         'https://khannatesting.a1professionals.net',
+        'https://khannafeederpweb.a1professionals.net',
         'https://your-other-allowed-domain.com',
     ];
 

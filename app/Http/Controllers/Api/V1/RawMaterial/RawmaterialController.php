@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\RawMaterial;
 use App\Models\RawMaterialCategory;
+use App\Models\WeightUnit;
 
 class RawmaterialController extends Controller
 {
@@ -27,6 +28,7 @@ class RawmaterialController extends Controller
     		$rawmaterial = new RawMaterial();
     		$rawmaterial->name = $request->name;
     		$rawmaterial->category_id = $request->category_id;
+            $rawmaterial->supplier_id = $request->supplier_id;
     		$rawmaterial->save();
 
 
@@ -51,12 +53,14 @@ class RawmaterialController extends Controller
 
    // ==================================Get Raw Material===========================
 
-    	public function get_rawmaterial()
+    	public function get_rawmaterial(Request $request)
     	{
     		DB::beginTransaction();
 
+            $id = $request->supplier_id;
+
     		try{
-    			$RawMaterial = RawMaterial::select('id','name','category_id')->where('status','Active')->get();
+    			$RawMaterial = RawMaterial::select('id','name','category_id','supplier_id')->where('status','Active')->where('supplier_id',$id)->get();
     			DB::commit();
 
     			return response()->json([
@@ -134,5 +138,28 @@ class RawmaterialController extends Controller
     			]);
     		}
     	}
+
+        // ==================Weigh Measures=========================
+        public function measure()
+        {
+            try{
+                $weight = WeightUnit::where('status','Active')->get();
+                DB::commit();
+                    return response()->json([
+                    'success' =>true,
+                    'status_code'=>200,
+                    'message'=> 'Weight Unit Fetch Successfully',
+                    'data' => $weight
+
+                ]);
+            }
+            catch(\Exception $e){
+                return response()->json([
+                    'success'=>false,
+                    'status_code'=>500,
+                    'message'=>'Something went wrong' .$e->getMessage()
+                ]);
+            }
+        }
 
 }

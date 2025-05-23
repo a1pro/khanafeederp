@@ -8,10 +8,10 @@ use App\Models\Employee;
 use App\Models\Company;
 use App\Models\Department;
 use App\Models\Designation;
-
+use Illuminate\Support\Facades\Hash;
 use App\Models\EmployeeLocation;
 use DB;
-
+use Illuminate\Support\Facades\Validator;
 class EmployeeController extends Controller
 {
     public function employee()
@@ -69,7 +69,6 @@ class EmployeeController extends Controller
     // ==================Employee Delete========================================
 
  
-
 public function deleteEmployee(Request $request)
 {
     DB::beginTransaction();
@@ -87,14 +86,16 @@ public function deleteEmployee(Request $request)
             ], 404);
         }
 
-        $employee->delete();
+        // Instead of deleting, update the status to "Inactive"
+        $employee->status = 'Inactive';
+        $employee->save();
 
         DB::commit();
 
         return response()->json([
             'success' => true,
             'status_code' => 200,
-            'message' => 'Employee deleted successfully'
+            'message' => 'Employee status set to Inactive successfully'
         ], 200);
     } catch (\Exception $e) {
         DB::rollBack();
@@ -106,6 +107,7 @@ public function deleteEmployee(Request $request)
         ], 500);
     }
 }
+
 
 
 
@@ -137,6 +139,80 @@ public function getEmployeeLocation()
             'success' => false,
             'message' => 'Failed to fetch employee locations: ' . $e->getMessage()
         ], 500);
+    }
+}
+
+
+
+// ===================Employee Update Profile=========================
+   
+public function updateEmploye(Request $request)
+{
+    $this->validate($request,[
+        'firstname' => 'required|string',
+        'lastname'  =>  'required|string',
+        'phone'     =>  'required',
+        'password'  =>  'required'
+       
+    ]);
+    DB::beginTransaction();
+
+    try {
+        $id = $request->id;
+
+        // Fetch the employee by ID
+        $employee = Employee::find($id);
+
+        if (!$employee) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'Employee not found'
+            ]);
+        }
+
+        // Update the employee's data
+        $employee->firstname = $request->firstname;
+        $employee->lastname  = $request->lastname;
+        $employee->phone     = $request->phone;
+        $employee->email     = $request->email;
+
+        // Only update password if provided
+        if ($request->filled('password')) {
+            $employee->password = Hash::make($request->password);
+        }
+
+        $employee->save();
+
+        DB::commit();
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Employee updated successfully',
+            'data' => $employee
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'status' => false,
+            'status_code' => 500,
+            'message' => 'Something went wrong: ' . $e->getMessage()
+        ]);
+    }
+}
+
+
+// =====================Employee Count======================
+public function countUser()
+{
+    try{
+        $count = Employee::count();
+        return response()->json(['success'=>true,'status_code'=>200,'message'=>'User Count Fetch Successfully','data'=>$count]);
+    }
+    catch(\Exception $e){
+        return response()->json(['success'=>false,'status_code'=>500,'message'=>'Something went wrong' .$e->getMessage()]);
     }
 }
 

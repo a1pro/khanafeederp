@@ -48,7 +48,8 @@ public function attendance()
                 'attendances.break_end_longitude',
                 'attendances.clock_out_latitude',
                 'attendances.clock_out_longitude',
-                'attendances.clock_out_meter_reading'
+                'attendances.clock_out_meter_reading',
+                'attendances.agent_type'
             )
             ->orderBy('attendances.id', 'desc')
             ->get()

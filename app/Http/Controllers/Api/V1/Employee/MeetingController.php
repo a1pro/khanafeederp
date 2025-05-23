@@ -40,6 +40,9 @@ class MeetingController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
+        // Get agent type from request (injected by middleware)
+        $agentType = $request->input('agent_type', 'unknown');
+
         DB::beginTransaction();
 
         $meeting = new Meeting();
@@ -50,6 +53,7 @@ class MeetingController extends Controller
         $meeting->longitude = $request->longitude;
         $meeting->date = $now->toDateString();
         $meeting->time = $now->toTimeString();
+        $meeting->agent_type = $agentType; // ✅ Save agent type
 
         if ($request->hasFile('image')) {
             $meeting->image = $request->file('image')->store('meeting_images', 'public');
@@ -57,17 +61,18 @@ class MeetingController extends Controller
 
         $meeting->save();
 
-         $location = EmployeeLocation::where('emp_id', $user->id)
+        // Update location if attendance exists
+        $location = EmployeeLocation::where('emp_id', $user->id)
             ->whereDate('attendance_date', $now->toDateString())
             ->first();
-            if($location){
-        $location = new EmployeeLocation();
-        $location->meeting_lat = $request->latitude;
-        $location->meeting_long = $request->longitude;
-        $location->meeting_date = $now->toDateString();
-        $location->meeting_time = $now->toTimeString();
-        $location->save();
-}
+
+        if ($location) {
+            $location->meeting_lat = $request->latitude;
+            $location->meeting_long = $request->longitude;
+            $location->meeting_date = $now->toDateString();
+            $location->meeting_time = $now->toTimeString();
+            $location->save();
+        }
 
         DB::commit();
 
@@ -87,6 +92,7 @@ class MeetingController extends Controller
         ]);
     }
 }
+
 
 // ============================Get Meeting=====================================
 public function getMeeting()

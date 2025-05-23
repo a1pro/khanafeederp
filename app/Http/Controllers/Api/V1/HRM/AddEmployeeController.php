@@ -60,7 +60,7 @@ class AddEmployeeController extends Controller
         $employe->designation_id    =       $request->input('designation_id');
         $employe->office_shift_id   =       $request->input('office_shift_id');
         $employe->basic_salary     =       $request->input('basic_salary');
-        $employe->password         =       Hash::make('12345678');
+        $employe->password         =       Hash::make('khannasales');
         $employe->save();
         
         if($employe->designation_id == 1){
@@ -338,7 +338,7 @@ public function uploadEmployeeCSV(Request $request)
                 'department_id' => $request->department_id,
                 'designation_id' => $request->designation_id,
                 'office_shift_id' => $request->office_shift_id,
-                'password' => Hash::make('12345678'),
+                'password' => Hash::make('khannasales'),
                 'birth_date' => $data['birth_date'] ?? null,
                 'country' => $data['country'] ?? null,
                 'city' => $data['city'] ?? null,

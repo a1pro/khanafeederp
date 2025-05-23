@@ -30,6 +30,7 @@ class PurchaseController extends Controller
     		$purchase->item_id = $request->item_id;
     		$purchase->quantity = $request->quantity;
     		$purchase->price = $request->price;
+            $purchase->measure = $request->measure;
     		$purchase->expected_deliver = $request->expected_deliver;
     		$purchase->date = $now->toDateString();
     		$purchase->save();

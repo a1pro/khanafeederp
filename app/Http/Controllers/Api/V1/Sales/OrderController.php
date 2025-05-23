@@ -15,31 +15,54 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller // ✅ Fixed here
 {
-    public function product_list()
-    {
-        DB::beginTransaction();
-        try {
-            $product = Product::select('id', 'code', 'price',  'note')->get();
+   public function product_list(Request $request)
+{
+    DB::beginTransaction();
+    try {
+        $categoryId = $request->query('category_id');
 
-            DB::commit();
+        $query = Product::select('id', 'code', 'price', 'name', 'image', 'category_id')
+            ->with(['category' => function($query) {
+                $query->select('id', 'name');
+            }])
+            ->where('is_active', 1);
 
-            return response()->json([
-                'success'     => true,
-                'status_code' => 200,
-                'message'     => 'Products Fetch Successfully',
-                'data'        => $product
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack(); // Also corrected rollback to rollBack
-
-            return response()->json([
-                'success'     => false,
-                'status_code' => 500,
-                'message'     => 'Something went wrong: ' . $e->getMessage()
-            ]);
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
         }
-    }
 
+        $products = $query->get();
+
+        $formattedProducts = $products->map(function ($product) {
+            return [
+                'id'            => $product->id,
+                'code'          => $product->code,
+                'price'         => $product->price,
+                'name'          => $product->name,
+                'image'         => $product->image ? asset('storage/' . $product->image) : null,
+                'category_id'   => $product->category_id,
+                'category_name' => $product->category->name ?? null
+            ];
+        });
+
+        DB::commit();
+
+        return response()->json([
+            'success'     => true,
+            'status_code' => 200,
+            'message'     => 'Products fetched successfully',
+            'data'        => $formattedProducts
+        ]);
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        return response()->json([
+            'success'     => false,
+            'status_code' => 500,
+            'message'     => 'Something went wrong: ' . $e->getMessage()
+        ]);
+    }
+}
 
     public function order_place(Request $request)
     {

@@ -26,13 +26,20 @@ public function startAttendance(Request $request)
 
         $now = Carbon::now('Asia/Kolkata');
 
-        // Prevent multiple clock-ins on the same date
+        // Check for duplicate attendance for today
         $existing = Attendance::where('user_id', $user->id)
             ->whereDate('date', $now->toDateString())
             ->first();
 
         if ($existing) {
             return response()->json(['success' => false, 'message' => 'Attendance already marked for today.'], 400);
+        }
+
+        // Detect agent type: from header or fallback to user-agent
+        $clientType = $request->header('X-Client-Type');
+        if (!$clientType) {
+            $userAgent = $request->userAgent();
+            $clientType = Str::contains($userAgent, ['Android', 'iPhone', 'Mobile']) ? 'mobile' : 'web';
         }
 
         // Save attendance
@@ -45,6 +52,7 @@ public function startAttendance(Request $request)
         $attendance->clock_in_latitude = $request->input('clock_in_latitude');
         $attendance->clock_in_longitude = $request->input('clock_in_longitude');
         $attendance->meter_reading = $request->input('meter_reading');
+        $attendance->agent_type = $clientType; // ✅ Save agent type
 
         if ($request->hasFile('meter_image')) {
             $attendance->meter_image = $request->file('meter_image')->store('attendance_images', 'public');
@@ -53,7 +61,6 @@ public function startAttendance(Request $request)
         $attendance->save();
 
         // Save employee location
-
         $location = new EmployeeLocation();
         $location->emp_id = $user->id;
         $location->check_in_lat = $request->input('clock_in_latitude');
@@ -76,8 +83,6 @@ public function startAttendance(Request $request)
         return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
     }
 }
-
-
 public function startBreak(Request $request)
 {
     try {

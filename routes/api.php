@@ -14,13 +14,11 @@ use App\Http\Controllers\Api\V1\HRM\SaleMeetingController;
 use App\Http\Controllers\Api\V1\HRM\AddEmployeeController;
 use App\Http\Controllers\Api\V1\Sales\OrderController;
 use App\Http\Controllers\Api\V1\RawMaterial\RawmaterialController;
-use App\Http\Controllers\Api\V1\RawMaterial\ProductController;
 use App\Http\Controllers\Api\V1\Distributor\DistributorController;
 use App\Http\Controllers\Api\V1\Provider\ProviderController;
 use App\Http\Controllers\Api\V1\Purchase\PurchaseController;
- 
-
-
+use App\Http\Controllers\Api\V1\Product\ProductController;
+use App\Http\Controllers\Api\V1\Accounts\AccountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -592,6 +590,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/add/employee/csv', [AddEmployeeController::class, 'uploadEmployeeCSV']);
     Route::post('/delete/employee', [EmployeeController::class, 'deleteEmployee']);
     Route::get('/get/employee/location', [EmployeeController::class, 'getEmployeeLocation']);
+ Route::post('/update/employee/data', [EmployeeController::class, 'updateEmploye']);
+Route::get('/get/user/count', [EmployeeController::class, 'countUser']);
+
 
 
     // =================================Raw Material========================================
@@ -607,7 +608,9 @@ Route::middleware('auth:sanctum')->group(function () {
     //=============================Purchase Section=========================================
     Route::post('/store-purchase',[PurchaseController::class,'storePurchase']);
 
-     
+     Route::get('/get/purchase/list', [AccountController::class, 'getPurchase']);
+     Route::get('/get/distributor/list', [AccountController::class, 'getDistributor']);
+     Route::get('/get/order/list', [AccountController::class, 'getOrder']);
    
 });
 
@@ -631,7 +634,10 @@ Route::middleware('auth:employee')->group(function () {
 
      //Provider/ Supplier
 
-   
+     //Account Department
+
+    
+
 
 });
 // ================================Staff Api's========================================
@@ -641,8 +647,12 @@ Route::post('/get/department', [AddEmployeeController::class, 'department']);
 Route::post('/get/designation', [AddEmployeeController::class, 'designation']);
 Route::post('/get/officeShift', [AddEmployeeController::class, 'officeShift']);
 Route::get('/get/products', [OrderController::class, 'product_list']);
-Route::get('/get/raw/material', [RawmaterialController::class, 'get_rawmaterial']);
+Route::post('/get/raw/material', [RawmaterialController::class, 'get_rawmaterial']);
 Route::get('/get/raw/material/category', [RawmaterialController::class, 'raw_material_category_store']);
+
+Route::post('/product/store', [ProductController::class, 'storeProduct']);
+Route::get('/get/weight/measure', [RawmaterialController::class, 'measure']);
+
 
 
 

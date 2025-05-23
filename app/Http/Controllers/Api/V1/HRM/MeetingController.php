@@ -36,7 +36,8 @@ class MeetingController extends Controller
 	                'meetings.time',
 	                'meetings.latitude',
 	                'meetings.longitude',
-	                'meetings.date'
+	                'meetings.date',
+	                'meetings.agent_type'
 	                
 	            )->where('meetings.id','desc')
 	            ->get()
