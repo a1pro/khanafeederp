@@ -19,6 +19,8 @@ use App\Http\Controllers\Api\V1\Provider\ProviderController;
 use App\Http\Controllers\Api\V1\Purchase\PurchaseController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\Accounts\AccountController;
+use App\Http\Controllers\Api\V1\Dashboard\DashCounterController;
+use App\Http\Controllers\Api\V1\State\StateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -611,6 +613,11 @@ Route::get('/get/user/count', [EmployeeController::class, 'countUser']);
      Route::get('/get/purchase/list', [AccountController::class, 'getPurchase']);
      Route::get('/get/distributor/list', [AccountController::class, 'getDistributor']);
      Route::get('/get/order/list', [AccountController::class, 'getOrder']);
+
+     //Graphs
+     Route::get('/attendance/graph', [DashCounterController::class, 'attendanceSummary']);
+
+
    
 });
 
@@ -637,6 +644,8 @@ Route::middleware('auth:employee')->group(function () {
      //Account Department
 
     
+     
+     
 
 
 });
@@ -653,7 +662,7 @@ Route::get('/get/raw/material/category', [RawmaterialController::class, 'raw_mat
 Route::post('/product/store', [ProductController::class, 'storeProduct']);
 Route::get('/get/weight/measure', [RawmaterialController::class, 'measure']);
 
-
+Route::get('/get/state', [StateController::class, 'state']);
 
 
 
