@@ -26,6 +26,8 @@ class MeetingController extends Controller
 	                'employees.firstname',
 	                'employees.lastname',
 	                'employees.email',
+	                'employees.state',
+	                'employees.phone',
 	                'companies.name as company_name',
 	                'departments.department as department_name',
 	                'designations.designation',

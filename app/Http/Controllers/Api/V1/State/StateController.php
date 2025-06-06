@@ -16,7 +16,9 @@ class StateController extends Controller
             'Gujarat',
             'Uttar Pradesh',
             'Madhya Pradesh',
-            'Rajasthan'
+            'Rajasthan',
+            'Haryana',
+            'Maharashtra'
         ])->get();
 
         return response()->json(['success'=>true,'status_code'=>200,'message'=>'state data fetch successfully','data'=>$states]);

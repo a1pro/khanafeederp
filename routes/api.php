@@ -585,16 +585,21 @@ Route::middleware('auth:sanctum')->group(function () {
     
     
     // HRM Dashboard
-    Route::get('/employee/list', [EmployeeController::class, 'employee']);   
+    Route::get('/employee/list', [EmployeeController::class, 'employee']);  
+    Route::get('/inactive/employee/list', [EmployeeController::class, 'Inactiveemployee']);   
     Route::get('/employee/attendance', [AttendanceController::class, 'attendance']);
+    Route::get('/employee/attendance/summary', [AttendanceController::class, 'attendanceSummary']);
+    Route::get('/employee/attendance/employee-details', [AttendanceController::class, 'employeeAttendanceDetails']);
+
+    
     Route::get('/employee/meeting', [SaleMeetingController::class, 'meeting']);
     Route::post('/add/employee', [AddEmployeeController::class, 'add_employee']);
     Route::post('/add/employee/csv', [AddEmployeeController::class, 'uploadEmployeeCSV']);
     Route::post('/delete/employee', [EmployeeController::class, 'deleteEmployee']);
     Route::get('/get/employee/location', [EmployeeController::class, 'getEmployeeLocation']);
- Route::post('/update/employee/data', [EmployeeController::class, 'updateEmploye']);
-Route::get('/get/user/count', [EmployeeController::class, 'countUser']);
-
+    Route::post('/update/employee/data', [EmployeeController::class, 'updateEmploye']);
+    Route::get('/get/user/count', [EmployeeController::class, 'countUser']);
+    Route::post('/change/status', [EmployeeController::class, 'employeactive']);
 
 
     // =================================Raw Material========================================
@@ -616,6 +621,7 @@ Route::get('/get/user/count', [EmployeeController::class, 'countUser']);
 
      //Graphs
      Route::get('/attendance/graph', [DashCounterController::class, 'attendanceSummary']);
+     Route::get('/meeting/count', [DashCounterController::class, 'meetingcount']);
 
 
    
